@@ -21,7 +21,7 @@ interface ICrud {
   readPurchase(filters: any): Promise<any[]>;
 
   // Métodos para Sells
-  createSell(item: any, quantity: number, date: Date): Promise<any>;
+  createSell(item: any, quantity: number, unitPrice: number, date: Date): Promise<any>;
   readSell(filters: any): Promise<any[]>;
 
   // Conexão
@@ -66,7 +66,7 @@ class ICrudImplementation implements ICrud {
   }
 
   // Sells
-  createSell(item: any, quantity: number, date: Date): Promise<any> {
+  createSell(item: any, quantity: number, unitPrice: number, date: Date): Promise<any> {
     throw new NotImplementedException();
   }
 

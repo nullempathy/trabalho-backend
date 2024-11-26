@@ -1,4 +1,4 @@
-import { DataSource, Repository, Like } from "typeorm";
+import { DataSource, Repository, Like, Between } from "typeorm";
 import { ICrudImplementation } from "./interfaces/interfaceCrud";
 import { Product } from "../../entities/Product";
 import { Stock, StockStatus } from "../../entities/Stock";
@@ -164,20 +164,17 @@ class Postgres implements ICrudImplementation {
   }
 
   // Sell Methods
-  async createSell(productId: string, quantity: number, sellDate: Date): Promise<Sell> {
-    this._validateRepositories(["Stock", "Sell", "Product"]);
+  async createSell(stockId: string, quantity: number, unitPrice: number, sellDate: Date): Promise<Sell> {
+    this._validateRepositories(["Stock", "Sell"]);
 
-    const product = await this._productRepository!.findOne({ where: { id: productId } });
-    if (!product) throw new Error("Product not found.");
-
-    const stock = await this._stockRepository!.findOne({ where: { product }, relations: ["product"] });
+    const stock = await this._stockRepository!.findOne({ where: { id: stockId }, relations: ["product"] });
     if (!stock || stock.quantity < quantity) throw new Error("Insufficient stock.");
 
     return this._driver!.transaction(async (manager) => {
       stock.quantity -= quantity;
       await manager.save(Stock, stock);
 
-      const sell = manager.create(Sell, { stock, quantity, sellDate });
+      const sell = manager.create(Sell, { stock, quantity, price: unitPrice, sellDate });
       return await manager.save(Sell, sell);
     });
   }
@@ -203,15 +200,6 @@ class Postgres implements ICrudImplementation {
       whereConditions.stock.product = { ...whereConditions.stock.product, price: filters.productPrice };
     }
   
-    // Filtra pela data de venda, se fornecida
-    if (filters.sellDate) {
-      const date = new Date(filters.sellDate);
-      if (isNaN(date.getTime())) {
-        throw new Error("Invalid date format. Use yyyy-mm-dd.");
-      }
-      whereConditions.sellDate = date;
-    }
-  
     return this._sellRepository!.find({
       where: whereConditions,
       relations: ["stock", "stock.product"],
@@ -223,6 +211,10 @@ class Postgres implements ICrudImplementation {
   async createPurchase(item: Partial<Purchase>): Promise<Purchase> {
     this._validateRepository(this._purchaseRepository, "Purchase");
   
+    if (!item.productName || item.quantity === undefined || item.price === undefined) {
+      throw new Error("Missing required fields: productName, quantity, or price.");
+    }
+  
     try {
       const purchase = this._purchaseRepository!.create(item);
       return await this._purchaseRepository!.save(purchase);
@@ -232,19 +224,21 @@ class Postgres implements ICrudImplementation {
     }
   }
   
-  async readPurchase(filters: Partial<Purchase> = {}): Promise<Purchase[]> {
+  
+  async readPurchase(filters: Partial<Purchase>): Promise<Purchase[]> {
     this._validateRepository(this._purchaseRepository, "Purchase");
   
-    try {
-      const purchases = await this._purchaseRepository!.find({
-        where: filters,
-        order: { purchaseDate: "DESC" }, // Ordenar por data de compra (mais recente primeiro)
-      });
-      return purchases;
-    } catch (error) {
-      console.error("Error reading purchases:", error);
-      throw new Error("Failed to read purchases. Please try again.");
+    const whereConditions: any = { ...filters };
+  
+    // Se houver um filtro de data, o TypeORM processa corretamente
+    if (filters.purchaseDate) {
+      whereConditions.purchaseDate = filters.purchaseDate;
     }
+  
+    return this._purchaseRepository!.find({
+      where: whereConditions,
+      order: { purchaseDate: "DESC" },
+    });
   }
 
   private _validateRepository(repository: Repository<any> | null, name: string): void {

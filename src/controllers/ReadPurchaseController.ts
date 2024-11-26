@@ -3,7 +3,7 @@ import { ReadPurchaseService } from "../services/ReadPurchaseService";
 
 class ReadPurchaseController {
   async handle(request: Request, response: Response): Promise<Response> {
-    const { productName, price, quantity, purchaseDate } = request.query;
+    const { productName, price, quantity, year, month, day } = request.query;
 
     const readPurchaseService = new ReadPurchaseService();
 
@@ -11,9 +11,11 @@ class ReadPurchaseController {
       // Converte os filtros recebidos da query string para o formato adequado
       const purchases = await readPurchaseService.execute({
         productName: productName as string,
-        price: price ? parseFloat(price as string) : undefined,
-        quantity: quantity ? parseInt(quantity as string, 10) : undefined,
-        purchaseDate: purchaseDate as string,
+        price: price ? { min: parseFloat(price as string) } : undefined,
+        quantity: quantity ? { min: parseInt(quantity as string, 10) } : undefined,
+        year: year as string,
+        month: month as string,
+        day: day as string,
       });
 
       return response.json(purchases);

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from "typeorm";
 import { Stock } from "./Stock";
 
 @Entity("sells")
@@ -13,7 +13,10 @@ class Sell {
   @Column("int")
   quantity: number;
 
-  @Column("timestamp")
+  @Column("decimal", { precision: 10, scale: 2 })
+  price: number;
+
+  @CreateDateColumn()
   sellDate: Date;
 }
 
