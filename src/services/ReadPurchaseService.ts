@@ -2,7 +2,8 @@ import { Between, Like } from "typeorm";
 import { Purchase } from "../entities/Purchase";
 import { db } from "../server";
 
-interface IReadPurchaseFilters {
+interface IReadPurchaseFiltersDTO {
+  id?: string; 
   productName?: string;
   price?: { min?: number; max?: number }; // Intervalo de preço
   quantity?: { min?: number; max?: number }; // Intervalo de quantidade
@@ -12,10 +13,14 @@ interface IReadPurchaseFilters {
 }
 
 class ReadPurchaseService {
-  async execute(filters: IReadPurchaseFilters = {}): Promise<Purchase[]> {
-    const { productName, price, quantity, year, month, day } = filters;
+  async execute(filters: IReadPurchaseFiltersDTO = {}): Promise<Purchase[]> {
+    const { id, productName, price, quantity, year, month, day } = filters;
 
     const processedFilters: any = {};
+
+    if (id) {
+      processedFilters.id = id;
+    }
 
     if (productName) processedFilters.productName = Like(`%${productName}%`);
     if (price) {

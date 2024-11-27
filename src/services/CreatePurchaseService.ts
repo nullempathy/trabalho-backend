@@ -1,7 +1,7 @@
 import { Purchase } from "../entities/Purchase";
 import { db } from "../server";
 
-interface ICreatePurchase {
+interface ICreatePurchaseDTO {
   productName: string;
   quantity: number;
   price: number;
@@ -9,7 +9,7 @@ interface ICreatePurchase {
 }
 
 class CreatePurchaseService {
-  async execute(data: ICreatePurchase): Promise<Purchase> {
+  async execute(data: ICreatePurchaseDTO): Promise<Purchase> {
     const { productName, quantity, price, purchaseDate } = data;
 
     // Validações de entrada

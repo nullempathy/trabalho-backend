@@ -6,11 +6,6 @@ class NotImplementedException extends Error {
 }
 
 interface ICrud {
-  // Métodos para Product
-  createProduct(item: any): Promise<any>;
-  readProduct(filters: any): Promise<any[]>;
-  updateProduct(id: string, item: any): Promise<any>;
-
   // Métodos para Stock
   createStock(item: any, quantity: number): Promise<any>;
   readStock(filters: any): Promise<any[]>;
@@ -19,6 +14,7 @@ interface ICrud {
   // Métodos para Purchases
   createPurchase(item: any): Promise<any>;
   readPurchase(filters: any): Promise<any[]>;
+  updatePurchase(id: string, item: any): Promise<any>;
 
   // Métodos para Sells
   createSell(item: any, quantity: number, unitPrice: number, date: Date): Promise<any>;
@@ -30,19 +26,6 @@ interface ICrud {
 }
 
 class ICrudImplementation implements ICrud {
-  // Product
-  createProduct(item: any): Promise<any> {
-    throw new NotImplementedException();
-  }
-
-  readProduct(filters: any): Promise<any[]> {
-    throw new NotImplementedException();
-  }
-
-  updateProduct(id: string, item: any): Promise<any> {
-    throw new NotImplementedException();
-  }
-
   // Stock
   createStock(item: any, quantity: number): Promise<any> {
     throw new NotImplementedException();
@@ -62,6 +45,10 @@ class ICrudImplementation implements ICrud {
   }
 
   readPurchase(filters: any): Promise<any[]> {
+    throw new NotImplementedException();
+  }
+
+  updatePurchase(id: string, item: any): Promise<any> {
     throw new NotImplementedException();
   }
 

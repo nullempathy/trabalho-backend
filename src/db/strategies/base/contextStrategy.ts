@@ -7,19 +7,6 @@ class ContextStrategy implements ICrudImplementation {
     this._database = strategy;
   }
 
-  // Product Methods
-  createProduct(item: any): Promise<any> {
-    return this._database.createProduct(item);
-  }
-
-  readProduct(filters: any): Promise<any[]> {
-    return this._database.readProduct(filters);
-  }
-
-  updateProduct(id: string, item: any): Promise<any> {
-    return this._database.updateProduct(id, item);
-  }
-
   // Stock Methods
   createStock(item: any, quantity: number): Promise<any> {
     return this._database.createStock(item, quantity);
@@ -42,9 +29,13 @@ class ContextStrategy implements ICrudImplementation {
     return this._database.readPurchase(filters);
   }
 
+  updatePurchase(id: string, item: any): Promise<any> {
+    return this._database.updatePurchase(id, item);
+  }
+
   // Sells Methods
-  createSell(item: any, quantity: number, date: Date): Promise<any> {
-    return this._database.createSell(item, quantity, date);
+  createSell(item: any, quantity: number, unitPrice: number, date: Date): Promise<any> {
+    return this._database.createSell(item, quantity, unitPrice, date);
   }
 
   readSell(filters: any): Promise<any[]> {

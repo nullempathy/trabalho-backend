@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
-import { Product } from "./Product";
+import { Purchase } from "./Purchase";
 
 export enum StockStatus {
   AVAILABLE = "Disponível",
@@ -12,8 +12,8 @@ class Stock {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => Product, (product) => product.stocks, { eager: true })
-  product: Product;
+  @ManyToOne(() => Purchase, (purchase) => purchase.stocks, { eager: true })
+  purchase: Purchase;
 
   @Column("int")
   quantity: number;
