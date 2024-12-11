@@ -3,12 +3,14 @@ import { ICrudImplementation } from "./interfaces/interfaceCrud";
 import { Stock, StockStatus } from "../../entities/Stock";
 import { Purchase } from "../../entities/Purchase";
 import { Sell } from "../../entities/Sell";
+import { Flag } from "../../entities/Flag";
 
-class Postgres implements ICrudImplementation {
+class Mysql implements ICrudImplementation {
   private _driver: DataSource | null = null;
   private _stockRepository: Repository<Stock> | null = null;
   private _purchaseRepository: Repository<Purchase> | null = null;
   private _sellRepository: Repository<Sell> | null = null;
+  private _flagRepository: Repository<Flag> | null = null;
 
   public getStockRepository(): Repository<Stock> {
     if(!this._stockRepository) {
@@ -29,6 +31,13 @@ class Postgres implements ICrudImplementation {
       throw new Error("Sell repository not initialized.");
     }
     return this._sellRepository;
+  }
+
+  public getFlagRepository(): Repository<Flag> {
+    if(!this._flagRepository) {
+      throw new Error("Flag repository not initialized.");
+    }
+    return this._flagRepository;
   }
 
   async isConnected(): Promise<boolean> {
@@ -64,6 +73,7 @@ class Postgres implements ICrudImplementation {
     this._stockRepository = this._driver.getRepository(Stock);
     this._purchaseRepository = this._driver.getRepository(Purchase);
     this._sellRepository = this._driver.getRepository(Sell);
+    this._flagRepository = this._driver.getRepository(Flag);
   }
 
   // Stock Methods
@@ -227,4 +237,4 @@ class Postgres implements ICrudImplementation {
   }
 }
 
-export default Postgres;
+export default Mysql;
